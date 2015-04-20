@@ -1,46 +1,92 @@
-
 (function() {
-
-	function $ ( id ) {
-		return document.getElementById(id.substr(1));
-	}
-	window.$ = $;
-
 
 	//http://218.93.33.59:85/map/szmap/img/44.jpg
 	//http://218.93.33.59:85/map/szmap/ibikegif.asp?id=44&flag=1
 	var IMAGE_URL_TEMP = "http://218.93.33.59:85/map/szmap/ibikegif.asp?id={station_id}&flag=3";
 
-	//check the storage
-	var el = null;
-	if( !window.localStorage ) {
-		if( !window.ibike ) {
-			//创建 script 标签，开始加载 bike station
-			//如何判断 script 加载完成
-			el = document.createElement('script');
-			el.src = 'js/bicycle-station.js';
-			$('#stationInfo').appendChild(el);
-			el.onload = function () {
-				alert('not supported localStorage, stationjs loaded');
-			};
-		}
-	} else {
-		var ibike = localStorage.getItem('bikeStation');
-		if(!ibike){
-			el = document.createElement('script');
-			el.src = 'js/bicycle-station.js';
-			$('#stationInfo').appendChild(el);
-			el.onload = function () {
-				alert('supported localStorage, stationjs loaded');
-				localStorage.setItem('bikeStation', ibike);
-			};
-		}else{
-			window.ibike = ibike;
-			alert('supported localStorage, and localStorage has strage the station data');
-		}
+	var $ = function ( id ) {
+		return document.getElementById(id.substr(1));
+	}
+	window.$ = $;
+
+	var asynLoadScrpt = function (jsSrc, _callback) {
+		var	el = document.createElement('script');
+		el.src = 'js/bicycle-station.js';
+		var body = document.body;
+		body.appendChild(el);
+		// $('#stationInfo').appendChild(el);
+		el.onload = function () {
+			console.log('ibike is %o', ibike);
+			_callback(ibike);
+			// alert(ibike);
+			//alert('not supported localStorage, stationjs loaded');
+		};
 	}
 
+	if(!window.JSON){
+		alert('not soupported window.JSON');
+	}
+
+	//check the storage
+	// var el = null;
+	if( typeof window.localStorage == "object") {
+		var bicycleStationItem = localStorage.getItem('bikeStation');
+		var bicycleStation = JSON.parse(bicycleStationItem);
+		if(!bicycleStationItem) {
+			localStorage.clear();
+		}else{
+			window.ibike = bicycleStation;
+			alert('supported localStorage, and localStorage has strage the station data');
+		}
+	} 
+
+	//当前环境没有 ibike，加载 bicycle-station.js，记载完毕之后，localStorage
+	if(!window.ibike || !window.ibike.station) {
+		var stationjsSrc = 'js/bicycle-station.js';
+		asynLoadScrpt(stationjsSrc, function(data){
+			// alert(data);
+			var bicycleStationItem = null;
+			if(data && data.station ) {
+				window.ibike = data;
+				bicycleStationItem = JSON.stringify(data);
+			}
+			//alert(data);
+			if(bicycleStationItem ) {
+				if(typeof window.localStorage == "object") {
+					localStorage.setItem('bikeStation', bicycleStationItem);	
+					alert('supported localStorage, but the station data haven\'t been storaged, now storage');	
+				}else{
+					alert('not supported localStorage, can not storage the station data');	
+				}
+			}
+			
+		});
+	}
+
+
+	// else {
+	// 	var ibike = localStorage.getItem('bikeStation');
+
+		
+	// 	if(!ibike || ibike == "null"){
+	// 		el = document.createElement('script');
+	// 		el.src = 'js/bicycle-station.js';
+	// 		$('#stationInfo').appendChild(el);
+	// 		el.onload = function () {
+	// 			alert(ibike);
+	// 			alert('supported localStorage, stationjs loaded');
+	// 			localStorage.setItem('bikeStation', ibike);
+	// 		};
+	// 	}else{
+	// 		window.ibike = ibike;
+	// 		alert(ibike);
+	// 		alert('supported localStorage, and localStorage has strage the station data');
+	// 	}
+
+	// }
+
 	// console.log(ibike.station.length);
+
 
 
 	function showStation ( _station ) {
