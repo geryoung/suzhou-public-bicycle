@@ -28,7 +28,6 @@
 	}
 
 	//check the storage
-	// var el = null;
 	if( typeof window.localStorage == "object") {
 		var bicycleStationItem = localStorage.getItem('bikeStation');
 		var bicycleStation = JSON.parse(bicycleStationItem);
