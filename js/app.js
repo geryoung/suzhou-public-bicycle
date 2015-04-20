@@ -1,13 +1,47 @@
 
 (function() {
-	//http://218.93.33.59:85/map/szmap/img/44.jpg
-	//http://218.93.33.59:85/map/szmap/ibikegif.asp?id=44&flag=1
-	var IMAGE_URL_TEMP = "http://218.93.33.59:85/map/szmap/ibikegif.asp?id={station_id}&flag=3";
-	// console.log(ibike.station.length);
+
 	function $ ( id ) {
 		return document.getElementById(id.substr(1));
 	}
 	window.$ = $;
+
+
+	//http://218.93.33.59:85/map/szmap/img/44.jpg
+	//http://218.93.33.59:85/map/szmap/ibikegif.asp?id=44&flag=1
+	var IMAGE_URL_TEMP = "http://218.93.33.59:85/map/szmap/ibikegif.asp?id={station_id}&flag=3";
+
+	//check the storage
+	var el = null;
+	if( !window.localStorage ) {
+		if( !window.ibike ) {
+			//创建 script 标签，开始加载 bike station
+			//如何判断 script 加载完成
+			el = document.createElement('script');
+			el.src = 'js/bicycle-station.js';
+			$('#stationInfo').appendChild(el);
+			el.onload = function () {
+				alert('not supported localStorage, stationjs loaded');
+			};
+		}
+	} else {
+		var ibike = localStorage.getItem('bikeStation');
+		if(!ibike){
+			el = document.createElement('script');
+			el.src = 'js/bicycle-station.js';
+			$('#stationInfo').appendChild(el);
+			el.onload = function () {
+				alert('supported localStorage, stationjs loaded');
+				localStorage.setItem('bikeStation', ibike);
+			};
+		}else{
+			window.ibike = ibike;
+			alert('supported localStorage, and localStorage has strage the station data');
+		}
+	}
+
+	// console.log(ibike.station.length);
+
 
 	function showStation ( _station ) {
 		var _stationId = _station.id;
@@ -33,7 +67,7 @@
 	
 
 	$('#searchBtn').addEventListener('click', function() {
-		console.log('clicked');
+		// console.log('clicked');
 		//$('numContent').src = IMAGE_URL_TEMP.replace('{station_id}', 1153);
 		if ( !ibike || !ibike.station) { 
 			console.log('station array not loaded');
