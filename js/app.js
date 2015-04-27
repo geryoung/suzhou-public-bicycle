@@ -9,7 +9,7 @@
 	}
 	window.$ = $;
 
-	var asynLoadScrpt = function (jsSrc, _callback) {
+/*	var asynLoadScrpt = function (jsSrc, _callback) {
 		var	el = document.createElement('script');
 		el.src = 'js/bicycle-station.js';
 		var body = document.body;
@@ -60,7 +60,7 @@
 			}
 			
 		});
-	}
+	}*/
 
 
 	// else {
@@ -86,6 +86,20 @@
 
 	// console.log(ibike.station.length);
 
+
+	window.onload = function() {
+		var infoHtml = 'info :';
+		switch(window.applicationCache.status) {
+			case window.applicationCache.UPDATEREADY :
+				infoHtml += 'cache update ready';
+				break;
+			case window.applicationCache.UNCACHED :
+				infoHtml += 'uncached';
+				break;
+ 		}
+
+		$('#stateInfo').innerHTML = infoHtml;
+	}
 
 
 	function showStation ( _station ) {
