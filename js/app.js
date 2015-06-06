@@ -98,7 +98,7 @@
 				break;
  		}
 
-		$('#stateInfo').innerHTML = infoHtml;
+		$('#stateInfo').innerHTML = infoHtml + window.applicationCache.status;
 	}
 
 
